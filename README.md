@@ -5,4 +5,4 @@ Test job for Skytec
 
 # 3rd party
 
-Free Platform Game Assets - https://assetstore.unity.com/packages/2d/environments/free-platform-game-assets-85838
+1 - https://assetstore.unity.com/packages/3d/characters/humanoids/character-pack-free-sample-79870
