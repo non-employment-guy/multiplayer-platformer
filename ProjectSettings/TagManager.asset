@@ -7,6 +7,7 @@ TagManager:
   - Earth
   - Cloud
   - Water
+  - Box
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - 
   - Player
   - Cloud
-  - 
+  - Bullet
   - 
   - 
   - 
