@@ -1296,6 +1296,48 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 49116c6064f6d2a4fbaf498b6b5d1c8b, type: 2}
   m_IsPrefabParent: 0
+--- !u!1001 &1760749110
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4298717123183214, guid: 0d26cdd6241fc5a4db374969fc3422d7, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: -6.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298717123183214, guid: 0d26cdd6241fc5a4db374969fc3422d7, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 1.63
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298717123183214, guid: 0d26cdd6241fc5a4db374969fc3422d7, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298717123183214, guid: 0d26cdd6241fc5a4db374969fc3422d7, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298717123183214, guid: 0d26cdd6241fc5a4db374969fc3422d7, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298717123183214, guid: 0d26cdd6241fc5a4db374969fc3422d7, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298717123183214, guid: 0d26cdd6241fc5a4db374969fc3422d7, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4298717123183214, guid: 0d26cdd6241fc5a4db374969fc3422d7, type: 2}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 0d26cdd6241fc5a4db374969fc3422d7, type: 2}
+  m_IsPrefabParent: 0
 --- !u!4 &1867017416 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4435430618374478, guid: 49116c6064f6d2a4fbaf498b6b5d1c8b,
