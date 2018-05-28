@@ -8,6 +8,8 @@ TagManager:
   - Cloud
   - Water
   - Box
+  - Enemy
+  - Buff
   layers:
   - Default
   - TransparentFX
@@ -20,7 +22,7 @@ TagManager:
   - Player
   - Cloud
   - Bullet
-  - 
+  - ObstacleCheck
   - 
   - 
   - 

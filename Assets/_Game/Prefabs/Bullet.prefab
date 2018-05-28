@@ -24,6 +24,8 @@ GameObject:
   - component: {fileID: 23055047740452158}
   - component: {fileID: 54156595873598434}
   - component: {fileID: 114270840484853346}
+  - component: {fileID: 114708390197724230}
+  - component: {fileID: 114456491736793260}
   m_Layer: 10
   m_Name: Bullet
   m_TagString: Untagged
@@ -38,8 +40,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1006050143525778}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalPosition: {x: 0.31, y: 1.958, z: -1.51}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -98,7 +100,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 12
   m_CollisionDetection: 0
 --- !u!114 &114270840484853346
 MonoBehaviour:
@@ -112,7 +114,62 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 0
+  GunOwner: {fileID: 0}
   LifeTime: 2
+  HitParticles: {fileID: 194062, guid: 8c27aeead6d968e4ba986702d6b84335, type: 2}
+--- !u!114 &114456491736793260
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1006050143525778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TransformSyncMode: 3
+  m_SendInterval: 0
+  m_SyncRotationAxis: 7
+  m_RotationSyncCompression: 0
+  m_SyncSpin: 0
+  m_MovementTheshold: 0.001
+  m_VelocityThreshold: 0.0001
+  m_SnapThreshold: 30
+  m_InterpolateRotation: 30
+  m_InterpolateMovement: 1
+--- !u!114 &114708390197724230
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1006050143525778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 129
+    i1: 199
+    i2: 45
+    i3: 66
+    i4: 11
+    i5: 169
+    i6: 5
+    i7: 164
+    i8: 186
+    i9: 197
+    i10: 236
+    i11: 64
+    i12: 137
+    i13: 41
+    i14: 139
+    i15: 167
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
 --- !u!135 &135011473416945190
 SphereCollider:
   m_ObjectHideFlags: 1

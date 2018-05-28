@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 54156595873598434}
   - component: {fileID: 114270840484853346}
   m_Layer: 10
-  m_Name: EnemyBullet
+  m_Name: Bullet 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -39,7 +39,7 @@ Transform:
   m_GameObject: {fileID: 1006050143525778}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -112,7 +112,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Damage: 0
+  GunOwner: {fileID: 0}
   LifeTime: 2
+  HitParticles: {fileID: 194062, guid: 8c27aeead6d968e4ba986702d6b84335, type: 2}
 --- !u!135 &135011473416945190
 SphereCollider:
   m_ObjectHideFlags: 1

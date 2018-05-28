@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -12,9 +13,21 @@ public class Player : NetworkBehaviour
 
     public float LowJumpMultiplier = 2f;
 
-    private Rigidbody _rb;
+    public int Kills;
 
-    private Vector3 _velocity;
+    public Transform GunPivot;
+
+    public GameObject BulletPrefab;
+
+    public GameObject Flash;
+
+    public float Damage = 25f;
+
+    public float FireForce = 50f;
+
+    public float FireCooldown = 0.5f;
+
+    private Rigidbody _rb;   
 
     private bool _inAir;
 
@@ -22,57 +35,78 @@ public class Player : NetworkBehaviour
 
     private bool _facingRight = true;
 
+    private bool _isDying = false;
+
     private float _moveForce;
 
     private float _jumpForce;
 
     private int _playerLayer;
 
+    private Health _healthComp;
+
+    private float _currentCooldown;
+
+    private float _vertical;
+
+    public override void OnStartLocalPlayer()
+    {
+        GetComponent<MeshRenderer>().material.color = Color.blue;        
+    }
+
     // Use this for initialization
     void Start()
     {
+        if (localPlayerAuthority)
+        {
+            _healthComp = GetComponent<Health>();            
+        }
+
         if (isLocalPlayer)
         {
             var camObject = GameObject.FindGameObjectWithTag("MainCamera");
             camObject.GetComponent<PlayerFollow>().TargeTransform = transform;
+
+            var uiManager = camObject.GetComponentInChildren<UIManager>();
+            uiManager.LocalPlayer = this;
+            uiManager.PlayerHealth = _healthComp;
         }
 
         _rb = GetComponent<Rigidbody>();
         _inAir = false;
         _onCloud = false;
-        _playerLayer = LayerMask.NameToLayer("Player");        
+        _playerLayer = LayerMask.NameToLayer("Player");     
+        GameManager.Instance.Players.Add(this);        
     }
 
     void Update()
     {
-        //float _xMov = Input.GetAxis("Horizontal");
-        //float _zMov = Input.GetAxis("Jump");
-
-        //Vector3 _movHorizontal = transform.right * _xMov;
-        //Vector3 _movVertical = transform.up * _zMov;
-
-        //// Final movement vector
-        //_velocity = _movHorizontal * MoveSpeed + _movVertical * JumpForce;
+        if (!isLocalPlayer) return;
 
         Flip(Input.GetAxis("Horizontal"));
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            CmdFire();
+        }
     }
     
     void FixedUpdate()
-    {
-        if (!isLocalPlayer)
+    {        
+        if (!isLocalPlayer) return;
+
+        if (_rb.velocity.y < 0)
         {
-            return;
+            _rb.velocity += Vector3.up * Physics.gravity.y * (FallMultiplier - 1) * Time.fixedDeltaTime;
         }
 
-        // Move();
+        if (_isDying) return;
 
         _jumpForce = Input.GetAxis("Jump") * JumpForce;
 
-        if (Math.Abs(_jumpForce) > 0.1 && _onCloud && Input.GetAxis("Vertical") < 0)
-        {
-            gameObject.layer = _playerLayer;
-        }
-        else if (Math.Abs(_jumpForce) > 0.1 && !_inAir)
+        _vertical = Input.GetAxis("Vertical");
+
+        if (Math.Abs(_jumpForce) > 0.1 && !_inAir && _vertical >= 0)
         {
             _rb.velocity = new Vector3(_moveForce, 0, 0);
             _rb.AddForce(0, _jumpForce, 0, ForceMode.Impulse);
@@ -82,10 +116,45 @@ public class Player : NetworkBehaviour
         _moveForce = Input.GetAxis("Horizontal") * MoveSpeed;
         _rb.velocity = new Vector3(_moveForce, _rb.velocity.y, 0);
 
-        if (_rb.velocity.y < 0)
-        {
-            _rb.velocity += Vector3.up * Physics.gravity.y * (FallMultiplier - 1) * Time.fixedDeltaTime;
-        }        
+              
+    }
+
+    [Command]
+    public void CmdJumpDown(GameObject obj)
+    {
+        obj.layer = _playerLayer;
+    }
+
+    [ClientRpc]
+    private void RpcJumpDown()
+    {
+        gameObject.layer = _playerLayer;
+    }
+
+    [Command]
+    void CmdFire()
+    {
+        // Create the Bullet from the Bullet Prefab
+        var bullet = (GameObject)Instantiate(
+            BulletPrefab,
+            GunPivot.position,
+            GunPivot.rotation);
+
+        bullet.GetComponent<Rigidbody>().velocity = bullet.transform.forward * FireForce;
+        NetworkServer.Spawn(bullet);
+        var bulletComp = bullet.GetComponent<Bullet>();
+        bulletComp.Damage = Damage;
+        bulletComp.GunOwner = this;
+       
+        _currentCooldown = FireCooldown;
+        StartCoroutine(ShowFlash(0.001f));
+    }
+
+    private IEnumerator ShowFlash(float f)
+    {
+        Flash.GetComponent<MeshRenderer>().enabled = true;
+        yield return new WaitForSeconds(f);
+        Flash.GetComponent<MeshRenderer>().enabled = false;
     }
 
     private void Flip(float inputValue)
@@ -104,17 +173,28 @@ public class Player : NetworkBehaviour
         }
     }
 
-    private void Move()
+    void OnCollisionStay(Collision col)
     {
-       // if (_rb.velocity != Vector3.zero)
+        switch (col.collider.tag)
         {
-            _rb.MovePosition(_rb.position + _velocity * Time.fixedDeltaTime);
+            case "Cloud":
+                if (Math.Abs(_jumpForce) > 0.1 && _onCloud && _vertical < 0)
+                {
+                    if (isServer)
+                        RpcJumpDown();
+                    else
+                    {
+                        gameObject.layer = _playerLayer;
+                        CmdJumpDown(gameObject);
+                    }
+                }
+                break;
         }
     }
 
     void OnCollisionEnter(Collision col)
     {
-        Debug.Log("Collide with " + col.gameObject.name);
+       //Debug.Log("Collide with " + col.gameObject.name);
         _inAir = false;
         switch (col.collider.tag)
         {
@@ -130,9 +210,39 @@ public class Player : NetworkBehaviour
                 {
                     gameObject.layer = 0;
                 }
+                break;            
+        }
+    }
+
+    void OnTriggerEnter(Collider col)
+    {
+        
+        switch (col.tag)
+        {
+            case "Buff":
+                var bf = col.GetComponent<BuffObject>();
+                if (bf.IsActive)
+                    TakeBuff(bf.Use());
                 break;
             case "Water":
+                if (!isServer)
+                    return;
                 RpcDrown();
+                break;
+        }
+    }
+
+    private void TakeBuff(Buff buff)
+    {
+        _healthComp.Buffs.Add(buff);
+        switch (buff.Type)
+        {
+            case BuffType.Shield:
+            case BuffType.Damage:
+                _healthComp.ApplyBuff(buff);
+                break;
+            case BuffType.Freeze:
+                GameManager.Instance.FreezeEnemies(buff.Duration);
                 break;
         }
     }
@@ -140,11 +250,26 @@ public class Player : NetworkBehaviour
     [ClientRpc]
     private void RpcDrown()
     {
+        if (!isLocalPlayer) return;
+        _isDying = true;
         Debug.Log("Drowned!");
-        if (isLocalPlayer)
+        FallMultiplier = 0.001f;
+        _rb.velocity = Vector3.zero;
+        StartCoroutine(StartDrowning(1f));
+    }
+
+    public IEnumerator StartDrowning(float time)
+    {
+        yield return new WaitForSeconds(time);
+        if (isServer)
+        {            
+            NetworkManager.singleton.StopHost();
+        }
+        else if (isClient)
         {
-            var ni = GetComponent<NetworkIdentity>();
-            ni.connectionToClient.Disconnect();
-        }            
+            GameManager.Instance.Players.Remove(this);
+            NetworkManager.singleton.StopClient();            
+        }
+        Destroy(gameObject);
     }
 }
